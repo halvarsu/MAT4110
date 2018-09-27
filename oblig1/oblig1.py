@@ -117,22 +117,48 @@ def cholesky(A, RR = True):
     else: 
         return L, np.diag(D)
 
+def K2_condition(A):
+    '''Calculates the K-2 condition of solving a linear system Ax = b using
+    the singular values of A'''
+
+    svd = linalg.svd(A)
+    sing_vals = svd[1]
+    return (np.max(sing_vals) / np.min(sing_vals))
+
+def ex3(args):
+    x,y = data1(plot=False)
+    deg = 5
+    X = np.array([x**i for i in range(deg+1)]).T
+    
+    Q,R = linalg.qr(X, mode = 'economic')
+    #svd = linalg.svd()
+    Rchol = cholesky(X.T@X)
+    print(K2_condition(Rchol))
+    print(K2_condition(Rchol.T))
+    print(K2_condition(Rchol.T)**2)
+    print(K2_condition(Rchol @ Rchol.T))
+
+    print(K2_condition(X))
+
+    print(R.shape)
+    # K2_condition(R)
+
 
 def main(args):
     """Either runs all parts or just one"""
-    parts = {1:ex1, 2: ex2}
+    parts = {1:ex1, 2: ex2, 3:ex3}
     if args.part == 0:
         ex1(args)
         ex2(args)
+        ex3(args)
     else:
         parts[args.part](args)
-
 
 def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-p','--part', type=int,default=0, 
-                        choices = [0,1,2])
+                        choices = [0,1,2,3])
     return parser.parse_args()
 
 if __name__=='__main__':
