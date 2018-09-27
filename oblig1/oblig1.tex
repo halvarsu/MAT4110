@@ -58,6 +58,7 @@
 
 \maketitle
 
+\section{Theory and methods}
 \subsection*{Exercise 1}
 The QR-factorization decomposes a $n\times m$ matrix $A$ (with $n \geq m$)by
 
@@ -112,10 +113,36 @@ is in our case, as $A = X^TX$), this can be rewritten
 
 if one writes $R = L D^{1/2}$, with $D^{1/2}$ as a matrix with the square
 root of the diagonal elements of $D$ along the diagonal, i.e.
-$(D^{1/2})_{i,i}  = \sqrt{D_{i,i}}$. We can then rewrite 
+$(D^{1/2})_{i,i}  = \sqrt{D_{i,i}}$. 
 
-This is implemented in the function \texttt{ex2} in the python code, as
-can be seen in listing~\ref{lst:oblig1}. 
+The problem we wish to solve is 
+
+\begin{equation}
+    X^T X x = X^T b \Rightarrow Ax = X^T b
+\end{equation}
+
+We rewrite the problem by
+performing the cholesky factorization on the symmetric matrix $A$,
+%
+\begin{equation}
+     RR^Tx = X^T b,
+\end{equation}
+%
+and then splitting this into a forward substitution 
+%
+\begin{equation}
+     R y = X^T b,
+\end{equation}
+%
+since $R$ is lower triangular, and a backward substitutiono
+%
+\begin{equation}
+     R^T x = y,
+\end{equation}
+%
+as $R^T$ is upper triangular.  This is implemented in the function
+\texttt{ex2} in the python code, as can be seen in
+listing~\ref{lst:oblig1}.  
 
 \subsection*{Exercise 3}
 
@@ -154,6 +181,29 @@ original problem can be increased by increasing the number of times we
 solve a linear system. 
 
 
+\section{Results}
+
+The resulting polynomials for the two functions stated in the problem set
+can be seen in \cref{fig:data1,fig:data2}
+
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{data1.pdf}
+    \caption{The first data as described in the problem set, fit with least
+    squares solved by both $QR$-factorization and cholesky-factorization,
+for polynomials of degree $3$ and $8$.}
+    \label{fig:data1}
+\end{figure}
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{data2.pdf}
+    \caption{The second data as described in the problem set, fit with least
+    squares solved by both $QR$-factorization and cholesky-factorization,
+for polynomials of degree $3$ and $8$.}
+    \label{fig:data2}
+\end{figure}
+\newpage
 
 \lstinputlisting[label={lst:oblig1},caption={The file \texttt{oblig1.py}
 }]{oblig1.py}

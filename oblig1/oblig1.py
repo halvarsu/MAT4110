@@ -56,7 +56,6 @@ def backward(U,b):
 def forward(L,b):
     M = L.shape[0]
     x = np.zeros(M)
-    print(L.shape, b.shape)
 
     x[0] = b[0]/L[0,0]
     for i in range(1,M):
@@ -67,7 +66,7 @@ def forward(L,b):
 def ex1(args):
     print('ex1')
     x,y = data1(plot=False)
-    deg = 6
+    deg = 3
     X = np.array([x**i for i in range(deg+1)]).T
     
     beta = QR_solve(X,y)
@@ -95,7 +94,6 @@ def cholesky_solve(A,b):
     # Solve R^T x = y
     # remember, R is lower diag
     R = cholesky(A.T@A)
-    print(A.shape)
     x = backward(R.T, forward(R, A.T @ b))
     return x
 
@@ -142,15 +140,43 @@ def ex3(args):
 
     print(R.shape)
     # K2_condition(R)
+def produce_results(args):
+    for i,datafunc in enumerate([data1, data2]):
+        fig, axes = plt.subplots(1,2, figsize = [9,3])
+
+        x,y = datafunc(plot=False)
+        for deg, ax in zip([3,8], axes):
+            print(deg)
+            X = np.array([x**i for i in range(deg+1)]).T
+            
+            # QR
+            beta = QR_solve(X,y)
+            ax.plot(x,y,'o', )
+            ax.plot(x,X@beta,'-', label='QR solver')
+
+            # Cholesky
+            B = X.T @ X
+            beta = cholesky_solve(X, y)
+            ax.plot(x,X@beta,'--', label='Cholesky solver')
+            ax.legend()
+            ax.set_title('Degree = {}'.format(deg))
+            ax.set_xlabel('$x$')
+            ax.set_ylabel('$y = f(x)$')
+        # fig.suptitle(i+1)
+        fig.tight_layout()
+        print(i+1)
+        plt.savefig(f'data{i+1}.pdf')
+        plt.show()
 
 
 def main(args):
     """Either runs all parts or just one"""
-    parts = {1:ex1, 2: ex2, 3:ex3}
+    parts = {1:ex1, 2: ex2, 3:ex3, 4:produce_results}
     if args.part == 0:
         ex1(args)
         ex2(args)
         ex3(args)
+        produce_results(args)
     else:
         parts[args.part](args)
 
@@ -158,7 +184,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-p','--part', type=int,default=0, 
-                        choices = [0,1,2,3])
+            choices = [0,1,2,3,4])
     return parser.parse_args()
 
 if __name__=='__main__':
